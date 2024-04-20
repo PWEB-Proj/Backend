@@ -1,7 +1,7 @@
 package com.example.pweb.persistance.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +14,33 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "our_users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class OurUsers implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String email;
+
     private String password;
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Role> role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Role role;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_preferences",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "categories_id")
+    )
+    private List<Category> preferences;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.stream().findFirst().get().getName()));
+        return List.of(new SimpleGrantedAuthority(role.getName()));
     }
 
     @Override
@@ -56,10 +71,5 @@ public class OurUsers implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setRole(Role role) {
-        this.role = new HashSet<>();
-        this.role.add(role);
     }
 }

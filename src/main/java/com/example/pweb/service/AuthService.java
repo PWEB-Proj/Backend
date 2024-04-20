@@ -1,6 +1,8 @@
 package com.example.pweb.service;
 
 import com.example.pweb.dto.ReqRes;
+import com.example.pweb.exceptions.CredentialsAlreadyExistException;
+import com.example.pweb.exceptions.UnexpectedException;
 import com.example.pweb.persistance.models.OurUsers;
 import com.example.pweb.persistance.models.Role;
 import com.example.pweb.persistance.repositories.OurUsersRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class AuthService {
@@ -30,6 +33,13 @@ public class AuthService {
 
     public ReqRes signUp(ReqRes registrationRequest) {
         ReqRes response = new ReqRes();
+
+        checkRegisterDetails(registrationRequest);
+
+        if(ourUsersRepository.existsByEmail(registrationRequest.getEmail())){
+            throw new CredentialsAlreadyExistException("Email already exists!");
+        }
+
         try {
             OurUsers ourUsers = new OurUsers();
             ourUsers.setEmail(registrationRequest.getEmail());
@@ -37,14 +47,13 @@ public class AuthService {
             Optional<Role> role = roleRepository.findById(registrationRequest.getRole());
             role.ifPresent(ourUsers::setRole);
             OurUsers ourUserResult = ourUsersRepository.save(ourUsers);
-            if(ourUserResult != null && ourUserResult.getId() > 0) {
+            if(ourUserResult.getId() > 0) {
                 response.setOurUser(ourUserResult);
                 response.setMessage("User registered successfully");
                 response.setStatusCode(200);
             }
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
+            throw new UnexpectedException("Unexpected error occurred!: " + e.getMessage());
         }
 
         return response;
@@ -65,8 +74,7 @@ public class AuthService {
             response.setExpirationTime("24h");
             response.setMessage("User signed in successfully");
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
+            throw new UnexpectedException("Unexpected error occurred!: " + e.getMessage());
         }
 
         return response;
@@ -84,10 +92,25 @@ public class AuthService {
             response.setExpirationTime("24h");
             response.setMessage("Token refreshed successfully");
         } else {
-            response.setStatusCode(500);
-            response.setError("Invalid token");
+            throw new UnexpectedException("Invalid token");
         }
 
         return response;
+    }
+
+    void checkRegisterDetails(ReqRes registerReq) {
+        if(registerReq.getEmail() == null || registerReq.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email is empty!");
+        } else if(validateEmail(registerReq.getEmail())) {
+            throw new IllegalArgumentException("Email is invalid!");
+        } else if(registerReq.getPassword() == null || registerReq.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password is empty!");
+        }
+    }
+
+    boolean validateEmail(String email) {
+        return Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+                .matcher(email)
+                .matches();
     }
 }
