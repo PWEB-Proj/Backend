@@ -5,7 +5,6 @@ import com.example.pweb.exceptions.CategoryTomTomException;
 import com.example.pweb.persistance.models.Category;
 import com.example.pweb.persistance.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,6 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     private final WebClient webClient;
+
+    private final UserService userService;
 
     @Override
     public void updateCategories() {
@@ -40,6 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public List<Category> getPreferencesById(Integer id) {
+        return userService.getPreferencesById(id);
     }
 
     @Override

@@ -17,6 +17,6 @@ public class UserFactoryImpl implements UserFactory{
 
     @Override
     public List<Category> getCategoriesFromPreferences(Set<CategoryId> preferences) {
-        return categoryRepository.findAllCategoriesById(preferences.stream().map(CategoryId::getId).toList());
+        return categoryRepository.findByIdIn(preferences.stream().map(CategoryId::getId).toList());
     }
 }

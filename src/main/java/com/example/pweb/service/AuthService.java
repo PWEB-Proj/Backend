@@ -67,7 +67,10 @@ public class AuthService {
             var user = ourUsersRepository.findByEmail(signInRequest.getEmail()).orElseThrow();
             System.out.println("User is: " + user);
             var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+            HashMap<String, Object> claims = new HashMap<>();
+            claims.put("role", user.getRole().getName());
+            claims.put("id", user.getId());
+            var refreshToken = jwtUtils.generateRefreshToken(claims, user);
             response.setStatusCode(200);
             response.setToken(jwt);
             response.setRefreshToken(refreshToken);

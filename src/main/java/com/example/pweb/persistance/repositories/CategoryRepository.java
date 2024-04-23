@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    @Query("SELECT c FROM Category c WHERE c.id IN :ids")
-    List<Category> findAllCategoriesById(List<Integer> ids);
+    List<Category> findByIdIn(List<Integer> ids);
 
 }

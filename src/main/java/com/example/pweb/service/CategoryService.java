@@ -9,5 +9,7 @@ public interface CategoryService {
 
     List<Category> getAllCategories();
 
+    List<Category> getPreferencesById(Integer id);
+
     void checkIfCategoryExists(String category);
 }
