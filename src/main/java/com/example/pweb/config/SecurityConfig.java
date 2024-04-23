@@ -32,7 +32,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**").permitAll()
+                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**", "/v3/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/itinerary/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/user/**", "/places/**", "/itinerary/**").hasAnyAuthority("USER", "ADMIN")
