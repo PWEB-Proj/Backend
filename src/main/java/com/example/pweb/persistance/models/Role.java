@@ -16,9 +16,9 @@ import lombok.Setter;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("id")
+    @Column(name = "id")
     private Integer id;
 
-    @JsonProperty("name")
+    @Column(name = "name")
     private String name;
 }

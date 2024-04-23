@@ -1,10 +1,13 @@
 package com.example.pweb.controller;
 
+import com.example.pweb.persistance.models.Category;
+import com.example.pweb.service.CategoryService;
 import com.example.pweb.service.UserService;
 import com.example.pweb.utils.CategoryId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController

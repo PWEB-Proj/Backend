@@ -17,10 +17,10 @@ public class Itinerary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonProperty("no_days")
+    @Column(name = "no_days")
     private Integer noDays;
 
-    @JsonProperty("location_name")
+    @Column(name = "location_name")
     private String locationName;
 
     @OneToOne(fetch = FetchType.EAGER)

@@ -1,6 +1,7 @@
 package com.example.pweb.persistance.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -15,9 +16,9 @@ import lombok.*;
 public class Category {
 
     @Id
-    @JsonProperty("id")
+    @Column(name = "id")
     private Integer id;
 
-    @JsonProperty("name")
+    @Column(name = "name")
     private String name;
 }
